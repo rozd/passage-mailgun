@@ -125,7 +125,8 @@ extension MailgunEmailDelivery: Identity.EmailDelivery {
     func sendPasswordResetEmail(
         to email: String,
         user: any User,
-        passwordResetURL: URL
+        passwordResetURL: URL,
+        passwordResetCode: String,
     ) async throws {
         _ = try await send(
             message: configuration.messages.passwordReset,
@@ -133,6 +134,7 @@ extension MailgunEmailDelivery: Identity.EmailDelivery {
             user: user,
             data: [
                 "reset_url": passwordResetURL.absoluteString,
+                "reset_code": passwordResetCode,
                 "email": email,
                 "username": user.username ?? ""
             ]
