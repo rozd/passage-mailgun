@@ -1,19 +1,13 @@
-//
-//  MailgunEmailDelivery.swift
-//  passten
-//
-//  Created by Max Rozdobudko on 11/28/25.
-//
-
 import Vapor
-@preconcurrency import Mailgun
+import Identity
+import Mailgun
 
-struct MailgunEmailDelivery: Sendable {
+public struct MailgunEmailDelivery: Sendable {
 
     let app: Application
     let configuration: Configuration
 
-    init(app: Application, configuration: Configuration) {
+    public init(app: Application, configuration: Configuration) {
         self.app = app
         self.configuration = configuration
 
@@ -23,31 +17,37 @@ struct MailgunEmailDelivery: Sendable {
 
 // MARK: - Configuration
 
-extension MailgunEmailDelivery {
+public extension MailgunEmailDelivery {
 
-    struct Configuration: Sendable {
-        struct Sender: Sendable {
+    public struct Configuration: Sendable {
+
+        public struct Sender: Sendable {
             let email: String
             let name: String?
+
+            public init(email: String, name: String? = nil) {
+                self.email = email
+                self.name = name
+            }
         }
 
-        struct Message: Sendable {
+        public struct Message: Sendable {
             let subject: String
             let template: String
 
-            init(subject: String, template: String) {
+            public init(subject: String, template: String) {
                 self.subject = subject
                 self.template = template
             }
         }
 
-        struct Messages: Sendable {
+        public struct Messages: Sendable {
             let welcome: Message
             let verification: Message
             let passwordReset: Message
             let verificationConfirmation: Message
 
-            init(
+            public init(
                 verification: Message = .init(
                     subject: "Verify your email",
                     template: "email-verification"
@@ -75,6 +75,16 @@ extension MailgunEmailDelivery {
         let mailgun: MailgunConfiguration
         let sender: Sender
         let messages: Messages
+
+        public init(
+            mailgun: MailgunConfiguration,
+            sender: Sender,
+            messages: Messages = .init()
+        ) {
+            self.mailgun = mailgun
+            self.sender = sender
+            self.messages = messages
+        }
     }
 
 }
@@ -103,7 +113,7 @@ extension MailgunEmailDelivery {
 
 extension MailgunEmailDelivery: Identity.EmailDelivery {
 
-    func sendEmailVerification(
+    public func sendEmailVerification(
         to email: String,
         user: any User,
         verificationURL: URL,
@@ -122,7 +132,7 @@ extension MailgunEmailDelivery: Identity.EmailDelivery {
         )
     }
 
-    func sendPasswordResetEmail(
+    public func sendPasswordResetEmail(
         to email: String,
         user: any User,
         passwordResetURL: URL,
@@ -141,7 +151,7 @@ extension MailgunEmailDelivery: Identity.EmailDelivery {
         )
     }
 
-    func sendWelcomeEmail(
+    public func sendWelcomeEmail(
         to email: String,
         user: any User,
     ) async throws {
@@ -156,7 +166,7 @@ extension MailgunEmailDelivery: Identity.EmailDelivery {
         )
     }
 
-    func sendEmailVerificationConfirmation(
+    public func sendEmailVerificationConfirmation(
         to email: String,
         user: any User,
     ) async throws {
