@@ -21,7 +21,7 @@ concurrency:
 
 jobs:
   update-dependency:
-    runs-on: macos-15
+    runs-on: macos-26
     outputs:
       pr-number: ${{ steps.create-pr.outputs.pr-number }}
       branch-name: ${{ steps.create-branch.outputs.branch-name }}
@@ -34,7 +34,7 @@ jobs:
       - name: Setup Swift
         uses: swift-actions/setup-swift@v2
         with:
-          swift-version: '6.0'
+          swift-version: '6.2'
 
       - name: Extract version
         id: get-version
