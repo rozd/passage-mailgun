@@ -1,5 +1,5 @@
 import Vapor
-import Identity
+import Passage
 import Mailgun
 
 public struct MailgunEmailDelivery: Sendable {
@@ -17,7 +17,7 @@ public struct MailgunEmailDelivery: Sendable {
 
 // MARK: - Configuration
 
-public extension MailgunEmailDelivery {
+extension MailgunEmailDelivery {
 
     public struct Configuration: Sendable {
 
@@ -109,9 +109,9 @@ extension MailgunEmailDelivery {
 
 }
 
-// MARK: - Identity.EmailDelivery Conformance
+// MARK: - Passage.EmailDelivery Conformance
 
-extension MailgunEmailDelivery: Identity.EmailDelivery {
+extension MailgunEmailDelivery: Passage.EmailDelivery {
 
     public func sendEmailVerification(
         to email: String,

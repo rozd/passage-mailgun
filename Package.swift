@@ -2,12 +2,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "vapor-identity-email-mailgun",
+    name: "passage-mailgun",
     platforms: [
         .macOS(.v15),
     ],
     products: [
-        .library(name: "IdentityMailgun", targets: ["IdentityMailgun"]),
+        .library(name: "PassageMailgun", targets: ["PassageMailgun"]),
     ],
     dependencies: [
         .package(path: "../vapor-identity"),
@@ -15,9 +15,9 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "IdentityMailgun",
+            name: "PassageMailgun",
             dependencies: [
-                .product(name: "Identity", package: "vapor-identity"),
+                .product(name: "Passage", package: "vapor-identity"),
                 .product(name: "Mailgun", package: "mailgun"),
             ]
         ),
