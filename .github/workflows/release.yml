@@ -67,8 +67,36 @@ jobs:
       - name: Build release
         run: swift build -c release
 
-      - name: Test
-        run: swift test
+      - name: Test with coverage
+        run: swift test --enable-code-coverage
+
+      - name: Generate coverage report
+        id: coverage
+        run: |
+          # Find the coverage profdata
+          PROFDATA=$(find .build -name "default.profdata" -type f | head -1)
+
+          # Find the test binary
+          TEST_BINARY=$(find .build -name "*.xctest" -type d | head -1)/Contents/MacOS/*
+          if [ -z "$TEST_BINARY" ] || [ ! -f $TEST_BINARY ]; then
+            # Fallback for Linux-style binary
+            TEST_BINARY=$(find .build -name "passage-mailgunPackageTests" -type f | head -1)
+          fi
+
+          if [ -n "$PROFDATA" ] && [ -n "$TEST_BINARY" ]; then
+            # Generate coverage report
+            xcrun llvm-cov report "$TEST_BINARY" -instr-profile="$PROFDATA" \
+              --ignore-filename-regex=".build|Tests" > coverage.txt
+
+            # Extract coverage percentage
+            COVERAGE=$(tail -1 coverage.txt | awk '{print $4}' | sed 's/%//')
+            echo "coverage=$COVERAGE" >> $GITHUB_OUTPUT
+            echo "Coverage: $COVERAGE%"
+            cat coverage.txt
+          else
+            echo "coverage=0" >> $GITHUB_OUTPUT
+            echo "Could not find coverage data"
+          fi
 
       - name: Check if main branch
         id: check-branch
@@ -79,6 +107,19 @@ jobs:
           else
             echo "is-main=false" >> $GITHUB_OUTPUT
           fi
+
+      - name: Update coverage badge
+        if: steps.check-branch.outputs.is-main == 'true'
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: ${{ vars.COVERAGE_GIST_ID }}
+          filename: coverage.json
+          label: coverage
+          message: ${{ steps.coverage.outputs.coverage }}%
+          valColorRange: ${{ steps.coverage.outputs.coverage }}
+          maxColorRange: 100
+          minColorRange: 0
 
       - name: Get version from tags
         id: get-version
