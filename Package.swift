@@ -12,6 +12,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/rozd/passage.git", from: "0.0.1"),
         .package(url: "https://github.com/vapor-community/mailgun.git", from: "6.0.1"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.119.0"),
     ],
     targets: [
         .target(
@@ -23,7 +24,10 @@ let package = Package(
         ),
         .testTarget(
             name: "PassageMailgunTests",
-            dependencies: ["PassageMailgun"]
+            dependencies: [
+                "PassageMailgun",
+                .product(name: "XCTVapor", package: "vapor"),
+            ]
         ),
     ]
 )
