@@ -134,29 +134,24 @@ jobs:
           echo "New version: $NEW_VERSION"
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
-      - name: Create archive
+      - name: Create archive (intermediate releases only)
         id: archive
+        if: steps.check-branch.outputs.is-main == 'false'
         run: |
           VERSION="${{ steps.get-version.outputs.version }}"
-          IS_MAIN="${{ steps.check-branch.outputs.is-main }}"
+          BRANCH_NAME=$(echo "${{ inputs.ref || github.ref }}" | sed 's|refs/heads/||' | sed 's|/|-|g')
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          ARCHIVE_NAME="passage-mailgun-${VERSION}-${BRANCH_NAME}-${SHORT_SHA}.zip"
 
-          if [ "$IS_MAIN" = "true" ]; then
-            ARCHIVE_NAME="passage-mailgun-${VERSION}.zip"
-          else
-            BRANCH_NAME=$(echo "${{ inputs.ref || github.ref }}" | sed 's|refs/heads/||' | sed 's|/|-|g')
-            SHORT_SHA=$(git rev-parse --short HEAD)
-            ARCHIVE_NAME="passage-mailgun-${VERSION}-${BRANCH_NAME}-${SHORT_SHA}.zip"
-          fi
-
-          # Create archive from build artifacts
-          cd .build/release
-          zip -r "../../${ARCHIVE_NAME}" . -x "*.build/*" -x "*.dSYM/*" -x "ModuleCache/*" -x "*.swiftmodule/*"
-          cd ../..
+          # Create source archive for inspection
+          zip -r "${ARCHIVE_NAME}" Sources Package.swift Package.resolved README.md LICENSE
 
           echo "archive-name=$ARCHIVE_NAME" >> $GITHUB_OUTPUT
           echo "Created archive: $ARCHIVE_NAME"
+          ls -la "${ARCHIVE_NAME}"
 
       - name: Upload archive artifact
+        if: steps.check-branch.outputs.is-main == 'false'
         uses: actions/upload-artifact@v4
         with:
           name: release-archive
@@ -202,11 +197,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download archive
-        uses: actions/download-artifact@v4
-        with:
-          name: release-archive
-
       - name: Create and push tag
         run: |
           VERSION="${{ needs.build-test-archive.outputs.version }}"
@@ -220,9 +210,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VERSION="${{ needs.build-test-archive.outputs.version }}"
-          ARCHIVE_NAME="${{ needs.build-test-archive.outputs.archive-name }}"
 
           gh release create "${VERSION}" \
             --title "Release ${VERSION}" \
-            --generate-notes \
-            "${ARCHIVE_NAME}"
+            --generate-notes
