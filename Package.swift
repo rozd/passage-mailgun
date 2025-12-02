@@ -10,14 +10,14 @@ let package = Package(
         .library(name: "PassageMailgun", targets: ["PassageMailgun"]),
     ],
     dependencies: [
-        .package(path: "../vapor-identity"),
+        .package(url: "https://github.com/rozd/passage.git", from: "0.0.1"),
         .package(url: "https://github.com/vapor-community/mailgun.git", from: "6.0.1"),
     ],
     targets: [
         .target(
             name: "PassageMailgun",
             dependencies: [
-                .product(name: "Passage", package: "vapor-identity"),
+                .product(name: "Passage", package: "passage"),
                 .product(name: "Mailgun", package: "mailgun"),
             ]
         ),
