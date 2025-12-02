@@ -115,19 +115,6 @@ jobs:
             echo "is-main=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Update coverage badge
-        if: steps.check-branch.outputs.is-main == 'true'
-        uses: schneegans/dynamic-badges-action@v1.7.0
-        with:
-          auth: ${{ secrets.GIST_TOKEN }}
-          gistID: ${{ vars.COVERAGE_GIST_ID }}
-          filename: coverage.json
-          label: coverage
-          message: ${{ steps.coverage.outputs.coverage }}%
-          valColorRange: ${{ steps.coverage.outputs.coverage }}
-          maxColorRange: 100
-          minColorRange: 0
-
       - name: Get version from tags
         id: get-version
         run: |
