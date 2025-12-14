@@ -1,6 +1,6 @@
 import Testing
 import Vapor
-import XCTVapor
+import VaporTesting
 import Mailgun
 import Passage
 @testable import PassageMailgun
@@ -38,6 +38,7 @@ final class MockMailgunProvider: MailgunProvider, @unchecked Sendable {
 }
 
 struct MockUser: User {
+    
     typealias Id = UUID
 
     var id: UUID?
@@ -59,6 +60,13 @@ struct MockUser: User {
             email: email,
             username: username
         )
+    }
+
+    public var sessionID: String {
+        guard let id = self.id else {
+            fatalError("Cannot persist unsaved model to session.")
+        }
+        return id.uuidString
     }
 }
 
@@ -123,6 +131,9 @@ struct ConfigurationTests {
 
             #expect(messages.verificationConfirmation.subject == "Email verified")
             #expect(messages.verificationConfirmation.template == "verification-confirmation")
+
+            #expect(messages.magicLink.subject == "Your magic link")
+            #expect(messages.magicLink.template == "magic-link")
         }
 
         @Test("initializes with custom verification message")
@@ -193,7 +204,8 @@ struct ConfigurationTests {
                 verification: .init(subject: "V", template: "v"),
                 passwordReset: .init(subject: "P", template: "p"),
                 welcome: .init(subject: "W", template: "w"),
-                verificationConfirmation: .init(subject: "C", template: "c")
+                verificationConfirmation: .init(subject: "C", template: "c"),
+                magicLink: .init(subject: "M", template: "m")
             )
 
             #expect(messages.verification.subject == "V")
@@ -204,6 +216,24 @@ struct ConfigurationTests {
             #expect(messages.welcome.template == "w")
             #expect(messages.verificationConfirmation.subject == "C")
             #expect(messages.verificationConfirmation.template == "c")
+            #expect(messages.magicLink.subject == "M")
+            #expect(messages.magicLink.template == "m")
+        }
+
+        @Test("initializes with custom magic link message")
+        func initWithCustomMagicLink() {
+            let customMagicLink = MailgunEmailDelivery.Configuration.Message(
+                subject: "Custom Magic Link",
+                template: "custom-magic-link"
+            )
+
+            let messages = MailgunEmailDelivery.Configuration.Messages(
+                magicLink: customMagicLink
+            )
+
+            #expect(messages.magicLink.subject == "Custom Magic Link")
+            #expect(messages.magicLink.template == "custom-magic-link")
+            #expect(messages.verification.subject == "Verify your email")
         }
     }
 }
@@ -431,6 +461,81 @@ struct EmailDeliveryTests {
         let message = mockProvider.sentTemplateMessages[0]
         #expect(message.subject == "Custom: Please verify")
         #expect(message.template == "custom-verify-template")
+    }
+
+    @Test("sends magic link email with correct data")
+    func sendMagicLinkEmail() async throws {
+        let app = try await Application.make(.testing)
+        defer { Task { try await app.asyncShutdown() } }
+
+        let mockProvider = MockMailgunProvider()
+        app.mailgun.use { _, _ in mockProvider }
+
+        let config = MailgunEmailDelivery.Configuration(
+            mailgun: .init(
+                apiKey: "test-api-key",
+                defaultDomain: .init("test.mailgun.org", .us)
+            ),
+            sender: .init(email: "noreply@test.com", name: "Magic Link Bot")
+        )
+
+        let delivery = MailgunEmailDelivery(app: app, configuration: config)
+        let user = MockUser.make(username: "magicuser")
+        let magicLinkURL = URL(string: "https://example.com/magic?token=abc123")!
+
+        try await delivery.sendMagicLinkEmail(
+            to: "magic@example.com",
+            user: user,
+            magicLinkURL: magicLinkURL
+        )
+
+        #expect(mockProvider.sentTemplateMessages.count == 1)
+
+        let message = mockProvider.sentTemplateMessages[0]
+        #expect(message.to == "magic@example.com")
+        #expect(message.from == "Magic Link Bot <noreply@test.com>")
+        #expect(message.subject == "Your magic link")
+        #expect(message.template == "magic-link")
+        #expect(message.templateData?["magic_link_url"] == "https://example.com/magic?token=abc123")
+        #expect(message.templateData?["email"] == "magic@example.com")
+        #expect(message.templateData?["username"] == "magicuser")
+    }
+
+    @Test("sends magic link email with nil user")
+    func sendMagicLinkEmailWithNilUser() async throws {
+        let app = try await Application.make(.testing)
+        defer { Task { try await app.asyncShutdown() } }
+
+        let mockProvider = MockMailgunProvider()
+        app.mailgun.use { _, _ in mockProvider }
+
+        let config = MailgunEmailDelivery.Configuration(
+            mailgun: .init(
+                apiKey: "test-api-key",
+                defaultDomain: .init("test.mailgun.org", .us)
+            ),
+            sender: .init(email: "noreply@test.com")
+        )
+
+        let delivery = MailgunEmailDelivery(app: app, configuration: config)
+        let magicLinkURL = URL(string: "https://example.com/magic?token=xyz789")!
+
+        try await delivery.sendMagicLinkEmail(
+            to: "anonymous@example.com",
+            user: nil,
+            magicLinkURL: magicLinkURL
+        )
+
+        #expect(mockProvider.sentTemplateMessages.count == 1)
+
+        let message = mockProvider.sentTemplateMessages[0]
+        #expect(message.to == "anonymous@example.com")
+        #expect(message.from == "noreply@test.com")
+        #expect(message.subject == "Your magic link")
+        #expect(message.template == "magic-link")
+        #expect(message.templateData?["magic_link_url"] == "https://example.com/magic?token=xyz789")
+        #expect(message.templateData?["email"] == "anonymous@example.com")
+        #expect(message.templateData?["username"] == "")
     }
 }
 

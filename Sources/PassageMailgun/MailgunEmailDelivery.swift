@@ -46,6 +46,7 @@ extension MailgunEmailDelivery {
             let verification: Message
             let passwordReset: Message
             let verificationConfirmation: Message
+            let magicLink: Message
 
             public init(
                 verification: Message = .init(
@@ -63,12 +64,17 @@ extension MailgunEmailDelivery {
                 verificationConfirmation: Message = .init(
                     subject: "Email verified",
                     template: "verification-confirmation"
-                )
+                ),
+                magicLink: Message = .init(
+                    subject: "Your magic link",
+                    template: "magic-link"
+                ),
             ) {
                 self.verification = verification
                 self.passwordReset = passwordReset
                 self.welcome = welcome
                 self.verificationConfirmation = verificationConfirmation
+                self.magicLink = magicLink
             }
         }
 
@@ -94,7 +100,7 @@ extension MailgunEmailDelivery {
     fileprivate func send(
         message: Configuration.Message,
         to email: String,
-        user: any User,
+        user: (any User)?,
         data: [String: String]? = nil,
     ) async throws -> ClientResponse {
         let content = MailgunTemplateMessage(
@@ -177,6 +183,23 @@ extension MailgunEmailDelivery: Passage.EmailDelivery {
             data: [
                 "email": email,
                 "username": user.username ?? ""
+            ]
+        )
+    }
+
+    public func sendMagicLinkEmail(
+        to email: String,
+        user: (any User)?,
+        magicLinkURL: URL,
+    ) async throws {
+        _ = try await send(
+            message: configuration.messages.magicLink,
+            to: email,
+            user: user,
+            data: [
+                "magic_link_url": magicLinkURL.absoluteString,
+                "email": email,
+                "username": user?.username ?? ""
             ]
         )
     }
