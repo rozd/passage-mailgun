@@ -57,17 +57,12 @@ jobs:
           path: |
             .build/checkouts
             .build/repositories
-          key: ${{ runner.os }}-spm-${{ hashFiles('Package.resolved') }}
+            .build/Build
+          key: ${{ runner.os }}-swift-6.2-spm-${{ hashFiles('Package.resolved') }}
           restore-keys: |
-            ${{ runner.os }}-spm-
+            ${{ runner.os }}-swift-6.2-spm-
 
-      - name: Resolve dependencies
-        run: swift package resolve
-
-      - name: Build release
-        run: swift build -c release
-
-      - name: Test with coverage
+      - name: Build and test with coverage
         run: swift test --enable-code-coverage
 
       - name: Generate coverage report
