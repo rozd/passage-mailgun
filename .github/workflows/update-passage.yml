@@ -81,7 +81,7 @@ jobs:
         run: |
           VERSION="${{ steps.get-version.outputs.version }}"
           # Update the passage dependency version
-          sed -i '' "s|\(\.package(url: \"https://github.com/rozd/passage.git\", from: \"\)[^\"]*\"|\1${VERSION}\"|" Package.swift
+          sed -i '' "s|\(\.package(url: \"https://github.com/vapor-community/passage.git\", from: \"\)[^\"]*\"|\1${VERSION}\"|" Package.swift
           echo "Updated Package.swift:"
           grep -n "passage.git" Package.swift
 
