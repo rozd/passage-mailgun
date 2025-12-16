@@ -1,13 +1,13 @@
 {
-  "originHash" : "0a1ffadd14a7a6ad7af760e82411509d4544c14a7e298f9eaca199ec063edbb2",
+  "originHash" : "af0f09597f71356523488eeede54e12a08a5e43f207bbbe9753013bd7f080166",
   "pins" : [
     {
       "identity" : "async-http-client",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swift-server/async-http-client.git",
       "state" : {
-        "revision" : "c464bf94eac4273cad7424307a5dc7e44e361905",
-        "version" : "1.30.1"
+        "revision" : "5dd84c7bb48b348751d7bbe7ba94a17bafdcef37",
+        "version" : "1.30.2"
       }
     },
     {
@@ -87,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor-community/passage.git",
       "state" : {
-        "revision" : "aab7faad8bd554c19dadc9df4f10619c6d722fe1",
-        "version" : "0.0.9"
+        "revision" : "e1882981749a08018f130d9074420cffed26e3b8",
+        "version" : "0.0.10"
       }
     },
     {
@@ -231,8 +231,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio.git",
       "state" : {
-        "revision" : "663ddc80f2081c8f22e417cbac5f80270a93795e",
-        "version" : "2.91.0"
+        "revision" : "a1605a3303a28e14d822dec8aaa53da8a9490461",
+        "version" : "2.92.0"
       }
     },
     {
