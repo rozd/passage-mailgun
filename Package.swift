@@ -10,7 +10,7 @@ let package = Package(
         .library(name: "PassageMailgun", targets: ["PassageMailgun"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/vapor-community/passage.git", from: "0.0.10"),
+        .package(url: "https://github.com/vapor-community/passage.git", from: "0.0.12"),
         .package(url: "https://github.com/vapor-community/mailgun.git", from: "6.0.1"),
         .package(url: "https://github.com/vapor/vapor.git", from: "4.119.0"),
     ],
