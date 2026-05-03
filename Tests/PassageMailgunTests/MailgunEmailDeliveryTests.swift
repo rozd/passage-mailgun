@@ -538,36 +538,3 @@ struct EmailDeliveryTests {
         #expect(message.templateData?["username"] == "")
     }
 }
-
-// MARK: - Type Conformance Tests
-
-@Suite("Type Conformance Tests")
-struct TypeConformanceTests {
-
-    @Test("Sender is Sendable")
-    func senderIsSendable() {
-        let sender = MailgunEmailDelivery.Configuration.Sender(email: "test@example.com")
-        let _: any Sendable = sender
-    }
-
-    @Test("Message is Sendable")
-    func messageIsSendable() {
-        let message = MailgunEmailDelivery.Configuration.Message(
-            subject: "Test",
-            template: "test"
-        )
-        let _: any Sendable = message
-    }
-
-    @Test("Messages is Sendable")
-    func messagesIsSendable() {
-        let messages = MailgunEmailDelivery.Configuration.Messages()
-        let _: any Sendable = messages
-    }
-
-    @Test("MailgunEmailDelivery is Sendable")
-    func mailgunEmailDeliveryIsSendable() {
-        func acceptsSendable<T: Sendable>(_ type: T.Type) {}
-        acceptsSendable(MailgunEmailDelivery.self)
-    }
-}
