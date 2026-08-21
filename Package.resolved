@@ -1,13 +1,13 @@
 {
-  "originHash" : "49e1b398c5d4a52f8554fa334bd295b398de8871879ba4b67168d8cc371ab539",
+  "originHash" : "93f059ed01df3fa2a2c286d2ca848f73a901a1342c989c894af8efc615c70c0b",
   "pins" : [
     {
       "identity" : "async-http-client",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swift-server/async-http-client.git",
       "state" : {
-        "revision" : "4b99975677236d13f0754339864e5360142ff5a1",
-        "version" : "1.30.3"
+        "revision" : "9544287b9416c0bc71e58b9f3aead8dd14b16103",
+        "version" : "1.36.0"
       }
     },
     {
@@ -69,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor-community/mailgun.git",
       "state" : {
-        "revision" : "b9c974fab796b8bce26bfd093057ca23bec2988e",
-        "version" : "6.0.1"
+        "revision" : "623a5c6b12811176d1dedd6034f4c4a91d90b446",
+        "version" : "6.1.0"
       }
     },
     {
@@ -87,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor-community/passage.git",
       "state" : {
-        "revision" : "3a817e9341cffe9c665b57162e12e549fd17c0ea",
-        "version" : "0.5.16"
+        "revision" : "e034b441588016c37a9eef5c7a0b8dfd1eb09a6c",
+        "version" : "0.5.17"
       }
     },
     {
@@ -157,7 +157,7 @@
     {
       "identity" : "swift-collections",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-collections.git",
+      "location" : "https://github.com/apple/swift-collections",
       "state" : {
         "revision" : "a0cb0954ecb21e4e31b0070e6ed5674e8556685a",
         "version" : "1.6.0"
@@ -168,8 +168,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-configuration.git",
       "state" : {
-        "revision" : "9d5e40727efd060fb9b41b69932738f478abaa43",
-        "version" : "0.2.0"
+        "revision" : "be76c4ad929eb6c4bcaf3351799f2adf9e6848a9",
+        "version" : "1.2.0"
       }
     },
     {
