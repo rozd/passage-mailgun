@@ -1,5 +1,5 @@
 {
-  "originHash" : "1483050e6ca14467aa8434f91254c90074c8d01c73ab7e22fd58c3543b4fa925",
+  "originHash" : "5703ff9c853dd81fe285a9b31a81250ae4c9cc1e6240f5b086799f213a8301da",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -87,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor-community/passage.git",
       "state" : {
-        "revision" : "2662db8605a74254bf77f6245ad8b2f91cfdd352",
-        "version" : "0.7.10"
+        "revision" : "2269cf41bd0adb9dd4d4b8fb34b11ae8d232f497",
+        "version" : "0.7.11"
       }
     },
     {
